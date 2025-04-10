@@ -56,7 +56,7 @@ def summarize_with_gpt4o(text, prompt, api_key):
     payload = {
         "model": "gpt-4o",
         "messages": [
-            {"role": "system", "content": "You are a helpful summarizer."},
+            {"role": "system", "content": "You are a helpful summarizer for financial information."},
             {"role": "user", "content": f"{prompt}\n\n{text}"}
         ]
     }

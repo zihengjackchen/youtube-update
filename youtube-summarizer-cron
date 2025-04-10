@@ -1,0 +1,6 @@
+# Run the script every hour
+
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+0 * * * * /bin/bash -c ". /etc/environment && python /app/main.py >> /var/log/cron.log 2>&1"
