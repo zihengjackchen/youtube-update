@@ -1,0 +1,5 @@
+feedparser
+requests
+PyYAML
+youtube-transcript-api
+yt-dlp
