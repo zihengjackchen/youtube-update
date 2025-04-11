@@ -20,22 +20,33 @@ def get_transcript_or_whisper(video_id, api_key):
 def transcribe_audio_with_openai(video_id, api_key):
     import yt_dlp
     import tempfile
+    import glob
 
     print(f"[WHISPER] Transcribing {video_id} using OpenAI Whisper API...")
     url = f"https://www.youtube.com/watch?v={video_id}"
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        filepath = os.path.join(tmpdir, "audio.mp3")
-        yt_dlp.YoutubeDL({
+        outtmpl = os.path.join(tmpdir, "%(title)s.%(ext)s")
+        ydl_opts = {
             "format": "bestaudio",
-            "outtmpl": filepath,
+            "outtmpl": outtmpl,
             "quiet": True,
             "postprocessors": [{
                 "key": "FFmpegExtractAudio",
                 "preferredcodec": "mp3",
-                "preferredquality": "192",
+                "preferredquality": "64",
             }],
-        }).download([url])
+        }
+
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+
+        # Look for mp3 file in tmpdir
+        mp3_files = glob.glob(os.path.join(tmpdir, "*.mp3"))
+        if not mp3_files:
+            raise FileNotFoundError("Audio file not found after yt-dlp processing.")
+        
+        filepath = mp3_files[0]
 
         with open(filepath, "rb") as f:
             res = requests.post(
